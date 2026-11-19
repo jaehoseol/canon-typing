@@ -1,0 +1,81 @@
+<idea-plugin>
+    <!-- 플러그인 ID는 Marketplace에 한 번 올리면 바꿀 수 없다. -->
+    <id>com.jaehoseol.canontyping</id>
+    <name>Canon Typing</name>
+    <vendor>Jaeho Seol (연우아빠)</vendor>
+
+    <description><![CDATA[
+        <p>Turns your typing into piano music. <b>Every key you press plays the next beat of
+        Pachelbel's Canon in D</b> &mdash; a single note, or a whole chord at once &mdash;
+        so your typing rhythm becomes the tempo.</p>
+
+        <h3>Features</h3>
+        <ul>
+            <li>One beat per key press in the editor, with chords sounding in full.</li>
+            <li><b>Auto-Tempo</b> (optional): when you type faster than a threshold, the music keeps a steady
+                tempo of your choice regardless of how fast you type, and returns to one beat per key
+                when you slow down.</li>
+            <li><b>Play Everywhere</b> (optional): also plays in the terminal, plugin tool windows
+                (such as chat panels), search fields and dialogs.</li>
+            <li>Load any <b>MIDI file</b> and type your way through it; notes that start together become one chord.</li>
+            <li>Built-in piano sound, synthesized in code &mdash; no sample files, no network access.</li>
+            <li>Works with IME input (e.g. Korean).</li>
+        </ul>
+
+        <h3>Usage</h3>
+        <p>Open <b>Tools | Canon Typing</b> to enable or disable the plugin, switch Auto-Tempo and
+        Play Everywhere, set the tempo, restart from the first beat, load a MIDI score, or play a test chord
+        to check your audio output.</p>
+
+        <p>The built-in piece is a simplified arrangement based on the Canon's chord progression and melodic
+        contour, not a transcription of the original score. Use a MIDI file for an exact score.</p>
+    ]]></description>
+
+    <!-- 플랫폼 공통 의존성만 사용하므로 PyCharm을 포함한 모든 JetBrains IDE에서 동작합니다. -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <editorFactoryListener implementation="com.jaehoseol.canontyping.ide.TypingEditorListener"/>
+        <!-- 키 감지 경로 2: IDE가 공식 제공하는 "글자가 입력될 때" 훅 (위 리스너가 놓친 키를 보완) -->
+        <typedHandler implementation="com.jaehoseol.canontyping.ide.CanonTypedHandler"/>
+    </extensions>
+
+    <actions>
+        <group id="CanonTyping.Menu" text="Canon Typing" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="CanonTyping.Toggle"
+                    class="com.jaehoseol.canontyping.ide.ToggleCanonTypingAction"
+                    text="Enable Canon Typing"
+                    description="Play a beat of Pachelbel's Canon on every key press"/>
+            <action id="CanonTyping.Everywhere"
+                    class="com.jaehoseol.canontyping.ide.ToggleEverywhereAction"
+                    text="Play Everywhere (Terminal, Chat Panels, Dialogs)"
+                    description="Also play in the terminal, Copilot and other plugin windows, search fields and dialogs"/>
+            <action id="CanonTyping.AutoTempo"
+                    class="com.jaehoseol.canontyping.ide.ToggleAutoTempoAction"
+                    text="Auto-Tempo (Steady Beat When Typing Fast)"
+                    description="When typing faster than the threshold, play at a steady tempo regardless of key presses"/>
+            <action id="CanonTyping.AutoTempoSettings"
+                    class="com.jaehoseol.canontyping.ide.AutoTempoSettingsAction"
+                    text="Auto-Tempo Settings..."
+                    description="Set the typing speed threshold and the tempo (BPM)"/>
+            <action id="CanonTyping.Restart"
+                    class="com.jaehoseol.canontyping.ide.RestartCanonAction"
+                    text="Restart From Beginning"
+                    description="Go back to the first beat of the piece"/>
+            <action id="CanonTyping.TestSound"
+                    class="com.jaehoseol.canontyping.ide.PlayTestSoundAction"
+                    text="Play Test Sound"
+                    description="Play a chord to check that audio output works"/>
+            <separator/>
+            <action id="CanonTyping.LoadMidi"
+                    class="com.jaehoseol.canontyping.ide.LoadMidiAction"
+                    text="Load MIDI Score..."
+                    description="Play a MIDI file instead of the built-in arrangement"/>
+            <action id="CanonTyping.UseBuiltIn"
+                    class="com.jaehoseol.canontyping.ide.UseBuiltInScoreAction"
+                    text="Use Built-in Canon in D"
+                    description="Switch back to the built-in arrangement"/>
+        </group>
+    </actions>
+</idea-plugin>
